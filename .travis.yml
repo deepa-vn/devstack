@@ -1,0 +1,41 @@
+sudo: required
+
+language: python
+
+python:
+  - "3.5"
+
+branches:
+  only:
+    - master
+
+env:
+  - DEVSTACK_WORKSPACE=/tmp SHALLOW_CLONE=1 DEVSTACK='lms'
+  - DEVSTACK_WORKSPACE=/tmp SHALLOW_CLONE=1 DEVSTACK='registrar'
+  - DEVSTACK_WORKSPACE=/tmp SHALLOW_CLONE=1 DEVSTACK='ecommerce'
+  - DEVSTACK_WORKSPACE=/tmp SHALLOW_CLONE=1 DEVSTACK='edx_notes_api'
+  - DEVSTACK_WORKSPACE=/tmp SHALLOW_CLONE=1 DEVSTACK='credentials'
+  - DEVSTACK_WORKSPACE=/tmp SHALLOW_CLONE=1 DEVSTACK='analytics_pipeline'
+
+services:
+  - docker
+
+before_install:
+  # Upgrade Docker to the latest version
+  - docker version
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - docker version
+  - docker-compose --version
+
+  - make requirements
+  - make dev.clone
+  - |
+    if [[ $DEVSTACK == 'analytics_pipeline' ]]; then
+        make dev.up.analytics_pipeline
+    else
+        make dev.pull.${DEVSTACK}
+    fi
+
+script:
+  - "./.travis/run.sh"
