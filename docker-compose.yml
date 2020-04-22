@@ -241,6 +241,7 @@ services:
       # - "18003:18003"
       # - "18031:18031"
     volumes:
+      - ${WORKSPACE}/devstack/etc/:/edx/etc/
       - edxapp_lms_assets:/edx/var/edxapp/staticfiles/
 
   registrar:
@@ -334,6 +335,7 @@ services:
       # - "18103:18103"
       # - "18131:18131"
     volumes:
+      - ${WORKSPACE}/devstack/etc/:/edx/etc/
       - edxapp_studio_assets:/edx/var/edxapp/staticfiles/
 
   # ==========================================================================
